@@ -330,7 +330,9 @@
 
     /**
      * Long collections can leave the current item off-screen; center it in the
-     * scroller (without animation, so the page doesn't visibly jump).
+     * scroller (without animation, so the page doesn't visibly jump). The
+     * scroller's size measurements are not final right after insertion, so the
+     * centering is re-issued a few times - re-runs are no-ops once correct.
      */
     function scrollCurrentIntoView(section) {
         var currentCard = section.querySelector('.collectionSectionCurrent');
@@ -339,14 +341,19 @@
             return;
         }
 
-        requestAnimationFrame(function () {
-            try {
-                if (typeof scroller.toCenter === 'function') {
-                    scroller.toCenter(currentCard, true);
-                } else if (typeof scroller.toStart === 'function') {
-                    scroller.toStart(currentCard, true);
+        [0, 300, 800].forEach(function (delay) {
+            setTimeout(function () {
+                if (!section.isConnected) {
+                    return;
                 }
-            } catch (e) { /* not scrollable yet - ignore */ }
+                try {
+                    if (typeof scroller.toCenter === 'function') {
+                        scroller.toCenter(currentCard, true);
+                    } else if (typeof scroller.toStart === 'function') {
+                        scroller.toStart(currentCard, true);
+                    }
+                } catch (e) { /* not scrollable yet - ignore */ }
+            }, delay);
         });
     }
 

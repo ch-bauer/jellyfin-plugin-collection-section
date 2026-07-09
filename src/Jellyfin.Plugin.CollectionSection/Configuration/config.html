@@ -29,10 +29,12 @@
                     </select>
                 </div>
 
-                <label class="checkboxContainer">
-                    <input is="emby-checkbox" type="checkbox" id="CollectionSectionIncludeSeries"/>
-                    <span>Also show the section on series detail pages</span>
-                </label>
+                <div class="checkboxContainer">
+                    <label>
+                        <input is="emby-checkbox" type="checkbox" id="CollectionSectionIncludeSeries"/>
+                        <span>Also show the section on series detail pages</span>
+                    </label>
+                </div>
 
                 <div class="verticalSection">
                     <h3>Collections</h3>
@@ -101,7 +103,7 @@
                     var html = '';
                     collections.forEach(function (collection) {
                         var checked = disabled.indexOf(normalizeId(collection.Id)) === -1 ? ' checked' : '';
-                        html += '<label style="display:block; margin: 0.4em 0;">'
+                        html += '<label style="margin: 0.4em 0;">'
                             + '<input is="emby-checkbox" type="checkbox" class="collectionSectionCheckbox"'
                             + ' data-collectionid="' + collection.Id + '"' + checked + ' />'
                             + '<span>' + escapeHtml(collection.Name) + '</span>'
@@ -149,7 +151,7 @@
                 var query = this.value.toLowerCase();
                 page.querySelectorAll('#CollectionSectionList label').forEach(function (label) {
                     label.style.display =
-                        label.textContent.toLowerCase().indexOf(query) === -1 ? 'none' : 'block';
+                        label.textContent.toLowerCase().indexOf(query) === -1 ? 'none' : '';
                 });
             });
 

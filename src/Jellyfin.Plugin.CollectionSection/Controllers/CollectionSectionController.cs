@@ -1,5 +1,6 @@
-using Jellyfin.Data.Enums;
 using Jellyfin.Plugin.CollectionSection.Configuration;
+using Jellyfin.Plugin.CollectionSection.Model;
+using Jellyfin.Plugin.CollectionSection.Services;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Entities.TV;
@@ -14,10 +15,12 @@ namespace Jellyfin.Plugin.CollectionSection.Controllers
     public class CollectionSectionController : ControllerBase
     {
         private readonly ILibraryManager m_libraryManager;
+        private readonly CollectionLookupService m_lookupService;
 
-        public CollectionSectionController(ILibraryManager libraryManager)
+        public CollectionSectionController(ILibraryManager libraryManager, CollectionLookupService lookupService)
         {
             m_libraryManager = libraryManager;
+            m_lookupService = lookupService;
         }
 
         /// <summary>
@@ -35,14 +38,13 @@ namespace Jellyfin.Plugin.CollectionSection.Controllers
             }
 
             PluginConfiguration config = Plugin.Instance?.Configuration ?? new PluginConfiguration();
-            CollectionsResponse emptyResponse = new CollectionsResponse(
-                config.SectionPosition, config.HighlightStyle, Array.Empty<CollectionInfo>());
 
             BaseItem? item = m_libraryManager.GetItemById(itemId);
             bool supported = item is Movie || (config.IncludeSeries && item is Series);
             if (!supported)
             {
-                return Ok(emptyResponse);
+                return Ok(new CollectionsResponse(
+                    config.SectionPosition, config.HighlightStyle, Array.Empty<CollectionInfo>()));
             }
 
             HashSet<Guid> disabled = config.DisabledCollectionIds
@@ -50,24 +52,9 @@ namespace Jellyfin.Plugin.CollectionSection.Controllers
                 .Where(g => g != Guid.Empty)
                 .ToHashSet();
 
-            List<CollectionInfo> collections = m_libraryManager.GetItemList(new InternalItemsQuery
-                {
-                    IncludeItemTypes = new[] { BaseItemKind.BoxSet },
-                    CollapseBoxSetItems = false,
-                    Recursive = true
-                })
-                .OfType<BoxSet>()
-                .Where(boxSet => !disabled.Contains(boxSet.Id))
-                .Where(boxSet => boxSet.GetLinkedChildren().Any(child => child.Id == itemId))
-                .OrderBy(boxSet => boxSet.SortName, StringComparer.OrdinalIgnoreCase)
-                .Select(boxSet => new CollectionInfo(boxSet.Id, boxSet.Name))
-                .ToList();
+            IReadOnlyList<CollectionInfo> collections = m_lookupService.GetCollectionsForItem(itemId, disabled);
 
             return Ok(new CollectionsResponse(config.SectionPosition, config.HighlightStyle, collections));
         }
     }
-
-    public record CollectionInfo(Guid Id, string Name);
-
-    public record CollectionsResponse(string SectionPosition, string HighlightStyle, IReadOnlyList<CollectionInfo> Collections);
 }

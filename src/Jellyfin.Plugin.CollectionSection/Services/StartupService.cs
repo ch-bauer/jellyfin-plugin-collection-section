@@ -21,15 +21,19 @@ namespace Jellyfin.Plugin.CollectionSection.Services
         public string Category => "Startup Services";
 
         private readonly ILogger<StartupService> m_logger;
+        private readonly CollectionLookupService m_lookupService;
 
-        public StartupService(ILogger<StartupService> logger)
+        public StartupService(ILogger<StartupService> logger, CollectionLookupService lookupService)
         {
             m_logger = logger;
+            m_lookupService = lookupService;
         }
 
         public Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
         {
             m_logger.LogInformation("Collection Section startup. Registering file transformation.");
+
+            m_lookupService.Warm();
 
             Assembly? fileTransformationAssembly =
                 AssemblyLoadContext.All.SelectMany(x => x.Assemblies).FirstOrDefault(x =>

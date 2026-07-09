@@ -30,6 +30,13 @@
     pointer-events: none;
 }
 
+/* Clip the highlighted poster itself to the ring's curve - on themes that
+   round the card via an overflow-clipped wrapper, the poster's own (squarer)
+   corners would otherwise peek out beside the ring. */
+.collectionSection[data-cs-highlight="ring"] .collectionSectionCurrent .cardImageContainer {
+    border-radius: var(--cs-ring-radius, 0.2em);
+}
+
 /* Highlight style "dim": every card except the current one is dimmed;
    hovering or focusing a card restores it. */
 .collectionSection[data-cs-highlight="dim"] .card:not(.collectionSectionCurrent) {

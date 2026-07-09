@@ -13,7 +13,7 @@
         "changelog": "Configurable section position and highlight style, optional series support, auto-scroll to the current item.",
         "targetAbi": "10.11.0.0",
         "sourceUrl": "https://github.com/ch-bauer/jellyfin-plugin-collection-section/releases/download/v1.1.0.0/collection-section_1.1.0.0.zip",
-        "checksum": "856318937eb311d080d58ff1ad7224a3",
+        "checksum": "cb1d917d25f2c199f4d7bcb439e05f39",
         "timestamp": "2026-07-09T00:00:00Z"
       }
     ]

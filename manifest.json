@@ -9,6 +9,14 @@
     "imageUrl": "",
     "versions": [
       {
+        "version": "1.1.4.0",
+        "changelog": "Highlight ring now fully seals the poster edges and corners on all themes.",
+        "targetAbi": "10.11.0.0",
+        "sourceUrl": "https://github.com/ch-bauer/jellyfin-plugin-collection-section/releases/download/v1.1.4.0/collection-section_1.1.4.0.zip",
+        "checksum": "b6b6af16c2b78c22d70b9b38f3de4e67",
+        "timestamp": "2026-07-09T00:00:00Z"
+      },
+      {
         "version": "1.1.2.0",
         "changelog": "Fix auto-scroll not centering the current item; fix checkbox label alignment on the settings page.",
         "targetAbi": "10.11.0.0",
